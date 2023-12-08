@@ -20,7 +20,7 @@ COPY package*.json ./
 RUN npm install --production
 
 # Copy any certificates if present.
-COPY ./certs /app/certs
+# COPY ./certs /app/certs
 
 # Copy local code to the container image.
 COPY . ./
