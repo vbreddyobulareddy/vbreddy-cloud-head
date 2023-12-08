@@ -1,15 +1,15 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
+import express, { Express } from "express";
+import dotenv from "dotenv";
+import { buildApp } from "./app";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server + added Nodemon from Server Folder');
-});
+const endpoint = buildApp(app);
 
 app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+  console.log(
+    `⚡️[server]: Server is running at http://localhost:${port}${endpoint}`
+  );
 });
