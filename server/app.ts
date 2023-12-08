@@ -1,6 +1,7 @@
-import express from 'express';
-import { createSchema, createYoga } from 'graphql-yoga';
-import helmet from 'helmet';
+import express from "express";
+import { createSchema, createYoga } from "graphql-yoga";
+import helmet from "helmet";
+import { getAppDataSource } from "./app-data-source";
 
 export function buildApp(app: ReturnType<typeof express>) {
   const graphQLServer = createYoga({
@@ -12,7 +13,7 @@ export function buildApp(app: ReturnType<typeof express>) {
       `,
       resolvers: {
         Query: {
-          hello: () => 'world',
+          hello: () => "world",
         },
       },
     }),
@@ -26,12 +27,12 @@ export function buildApp(app: ReturnType<typeof express>) {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          'style-src': ["'self'", 'unpkg.com'],
-          'script-src': ["'self'", 'unpkg.com', "'unsafe-inline'"],
-          'img-src': ["'self'", 'raw.githubusercontent.com'],
+          "style-src": ["'self'", "unpkg.com"],
+          "script-src": ["'self'", "unpkg.com", "'unsafe-inline'"],
+          "img-src": ["'self'", "raw.githubusercontent.com"],
         },
       },
-    }),
+    })
   );
 
   router.use(graphQLServer);
@@ -43,8 +44,18 @@ export function buildApp(app: ReturnType<typeof express>) {
   app.use(helmet());
 
   // Rest of the routes
-  app.get('/', (req, res) => {
-    res.send('Hello World!');
+  app.get("/", (req, res) => {
+    const dataSource = getAppDataSource();
+    dataSource
+      .initialize()
+      .then(() => {
+        console.log("Data Source has been initialized");
+        res.send("Data Source has been initialized");
+      })
+      .catch((err) => {
+        console.log("Error during the dataSource initialization", err);
+        res.send(err);
+      });
   });
 
   return graphQLServer.graphqlEndpoint;
